@@ -4,19 +4,30 @@ const IFrame = document.querySelector(".Projects-IFrame");
 
 async function addGames() {
   try {
-    const cdn = await (await fetch("./Hosting/CDN.json")).json();
-    const games = await (await fetch(cdn + "list.json")).json();
+    // Fetch and parse the CDN URL, handling the case where it might be a string or in an array
+    const cdnResponse = await fetch("./Hosting/CDN.json");
+    const cdnData = await cdnResponse.json();
+    const cdn = Array.isArray(cdnData) ? cdnData[0] : cdnData;
+
+    // Log the CDN URL for debugging
+    console.log("Using CDN URL:", cdn);
+
+    // Fetch the games list
+    const gamesResponse = await fetch(cdn + "list.json");
+    if (!gamesResponse.ok) {
+      throw new Error(`HTTP error! status: ${gamesResponse.status}`);
+    }
+    const games = await gamesResponse.json();
     games.sort((a, b) => a.game.localeCompare(b.game));
 
     for (const game of games) {
       const project = document.createElement("div");
       project.className = "Projects-Project";
       project.innerHTML = `
-                <img src="${cdn}/Icons/${game.game.replace(
-        /[.\s]/g,
-        ""
-      )}.webp" loading="lazy" onerror="this.src='./Assests/Imgs/NoIcon.png'"/>
-                <h1>${game.game}</h1>`;
+        <img src="${cdn}Icons/${game.game.replace(/[.\s]/g, "")}.webp" 
+             loading="lazy" 
+             onerror="this.src='./Assests/Imgs/NoIcon.png'"/>
+        <h1>${game.game}</h1>`;
       document.querySelector(".Projects-Container").appendChild(project);
 
       project.addEventListener("click", () => {
@@ -26,7 +37,13 @@ async function addGames() {
       });
     }
   } catch (error) {
-    console.error(error);
+    console.error("Error loading games:", error);
+    // Add visual error feedback
+    const container = document.querySelector(".Projects-Container");
+    container.innerHTML += `
+      <div class="error-message" style="color: red; padding: 20px;">
+        Failed to load games. Please check the console for details.
+      </div>`;
   }
 }
 
