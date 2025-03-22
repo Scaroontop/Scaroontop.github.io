@@ -7,40 +7,51 @@ const extensions = {
     "GoGuardian": "chrome-extension://haldlgldplgnggkjaafhelgiaglafanh/youtube_injection.js",
 };
 
-const STORAGE_KEY = "verification-status";
-const VERIFICATION_EXPIRY_KEY = "verification-expiry";
-const USER_DATA_KEY = "verification-user-data";
-const VERIFICATION_PAGE = "/verification.html";
-const CURRENT_USER = "Scaroontop";
-const CURRENT_UTC_TIME = "2025-03-22 09:45:16";
+// Configuration
+const CONFIG = {
+    STORAGE_KEY: "verification-status",
+    VERIFICATION_EXPIRY_KEY: "verification-expiry",
+    USER_DATA_KEY: "verification-user-data",
+    VERIFICATION_PAGE: "/index.html", // Updated to your index.html which has the verification
+    DEFAULT_REDIRECT: "./h.html", // Will redirect to games page
+    CURRENT_USER: "Scaroontop",
+    CURRENT_UTC_TIME: "2025-03-22 09:59:17"
+};
 
 function saveUserData(verificationStatus) {
     const userData = {
-        username: CURRENT_USER,
-        verificationDate: CURRENT_UTC_TIME,
+        username: CONFIG.CURRENT_USER,
+        verificationDate: CONFIG.CURRENT_UTC_TIME,
         status: verificationStatus,
-        lastChecked: CURRENT_UTC_TIME
+        lastChecked: CONFIG.CURRENT_UTC_TIME
     };
-    localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+    localStorage.setItem(CONFIG.USER_DATA_KEY, JSON.stringify(userData));
 }
 
 function checkVerificationStatus() {
-    const verificationExpiry = localStorage.getItem(VERIFICATION_EXPIRY_KEY);
-    const isVerified = localStorage.getItem(STORAGE_KEY) === "verified";
+    const verificationExpiry = localStorage.getItem(CONFIG.VERIFICATION_EXPIRY_KEY);
+    const isVerified = localStorage.getItem(CONFIG.STORAGE_KEY) === "verified";
     const now = new Date().getTime();
     
     if (isVerified && verificationExpiry && parseInt(verificationExpiry) > now) {
         return true;
     }
     
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(VERIFICATION_EXPIRY_KEY);
+    localStorage.removeItem(CONFIG.STORAGE_KEY);
+    localStorage.removeItem(CONFIG.VERIFICATION_EXPIRY_KEY);
     return false;
 }
 
 function showVerificationMessage() {
+    // Remove any existing messages first
+    const existingOverlay = document.querySelector('.verification-overlay');
+    const existingBox = document.querySelector('.verification-alert');
+    if (existingOverlay) existingOverlay.remove();
+    if (existingBox) existingBox.remove();
+
     // Create overlay
     const overlay = document.createElement('div');
+    overlay.className = 'verification-overlay';
     overlay.style.cssText = `
         position: fixed;
         top: 0;
@@ -48,13 +59,15 @@ function showVerificationMessage() {
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(2px);
-        z-index: 9999;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 999999;
         animation: fadeIn 0.3s ease-out;
     `;
 
     // Create the alert box container
     const alertBox = document.createElement('div');
+    alertBox.className = 'verification-alert';
     alertBox.style.cssText = `
         position: fixed;
         top: 50%;
@@ -64,52 +77,13 @@ function showVerificationMessage() {
         padding: 24px;
         border-radius: 12px;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        z-index: 10000;
+        z-index: 1000000;
         max-width: 400px;
         width: 90%;
         text-align: center;
         animation: slideIn 0.3s ease-out;
     `;
 
-    // Create messages container
-    const messagesContainer = document.createElement('div');
-    messagesContainer.style.cssText = `
-        margin: 0 0 20px 0;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    `;
-
-    // Add messages
-    const messages = [
-        { text: "Verification Required", style: "font-size: 20px; font-weight: 600; color: #1f2937;" },
-        { text: "You must complete the verification to access this page", style: "font-size: 16px; color: #4b5563;" },
-        { text: `User: ${CURRENT_USER}`, style: "font-size: 14px; color: #6b7280;" }
-    ];
-
-    messages.forEach(msgConfig => {
-        const message = document.createElement('p');
-        message.textContent = msgConfig.text;
-        message.style.cssText = `
-            margin: 0;
-            ${msgConfig.style}
-        `;
-        messagesContainer.appendChild(message);
-    });
-
-    // Add timestamp
-    const timestamp = document.createElement('div');
-    timestamp.textContent = `Last Updated: ${CURRENT_UTC_TIME}`;
-    timestamp.style.cssText = `
-        font-size: 11px;
-        color: #9ca3af;
-        margin-top: 16px;
-        text-align: center;
-        font-family: monospace;
-    `;
-
-    // Add animation styles
     const style = document.createElement('style');
     style.textContent = `
         @keyframes fadeIn {
@@ -119,7 +93,7 @@ function showVerificationMessage() {
         @keyframes slideIn {
             from { 
                 opacity: 0;
-                transform: translate(-50%, -40%);
+                transform: translate(-50%, -60%);
             }
             to { 
                 opacity: 1;
@@ -129,54 +103,129 @@ function showVerificationMessage() {
     `;
     document.head.appendChild(style);
 
-    // Assemble and add to page
-    alertBox.appendChild(messagesContainer);
+    const content = document.createElement('div');
+    content.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    `;
+
+    // Add icon
+    const icon = document.createElement('div');
+    icon.innerHTML = `
+        <svg viewBox="0 0 24 24" width="40" height="40" style="margin: 0 auto; color: #dc2626;">
+            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+    `;
+    icon.style.marginBottom = '16px';
+
+    const messages = [
+        { text: "Verification Required", style: "font-size: 20px; font-weight: 600; color: #1f2937;" },
+        { text: "You must complete the verification to access this page", style: "font-size: 16px; color: #4b5563;" },
+        { text: `User: ${CONFIG.CURRENT_USER}`, style: "font-size: 14px; color: #6b7280;" }
+    ];
+
+    messages.forEach(msg => {
+        const p = document.createElement('p');
+        p.textContent = msg.text;
+        p.style.cssText = `margin: 0; ${msg.style}`;
+        content.appendChild(p);
+    });
+
+    const timestamp = document.createElement('div');
+    timestamp.textContent = `Last Updated: ${CONFIG.CURRENT_UTC_TIME}`;
+    timestamp.style.cssText = `
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 16px;
+        font-family: monospace;
+    `;
+
+    alertBox.appendChild(icon);
+    alertBox.appendChild(content);
     alertBox.appendChild(timestamp);
     document.body.appendChild(overlay);
     document.body.appendChild(alertBox);
 
-    // Redirect after delay
     setTimeout(() => {
         const currentPage = window.location.href;
-        window.location.href = `${VERIFICATION_PAGE}?returnUrl=${encodeURIComponent(currentPage)}`;
+        window.location.href = `${CONFIG.VERIFICATION_PAGE}?returnUrl=${encodeURIComponent(currentPage)}`;
     }, 2000);
-}
-
-// Rest of the code remains the same...
-function checkExtensions() {
-    // ... (keep existing code)
 }
 
 function redirectToPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const returnUrl = urlParams.get('returnUrl');
-    window.location.href = returnUrl || window.location.origin;
+    window.location.href = returnUrl || CONFIG.DEFAULT_REDIRECT;
+}
+
+function checkExtensions() {
+    const statusElement = document.getElementById('status');
+    const spinner = document.getElementById('spinner');
+    const success = document.getElementById('success');
+    const failure = document.getElementById('failure');
+    const alreadyVerified = document.getElementById('already-verified');
+    const progressFill = document.querySelector('.progress-fill');
+
+    if (checkVerificationStatus()) {
+        statusElement.textContent = "";
+        spinner.classList.add('hidden');
+        progressFill.style.width = '100%';
+        alreadyVerified.classList.remove('hidden');
+        document.getElementById('user-info').textContent = `Verified User: ${CONFIG.CURRENT_USER}`;
+        saveUserData("already-verified");
+        setTimeout(() => redirectToPage(), 3000);
+        return;
+    }
+
+    const promises = Object.entries(extensions).map(([name, url]) =>
+        fetch(url, { method: 'HEAD' })
+            .then(() => name)
+            .catch(() => null)
+    );
+
+    Promise.all(promises).then(results => {
+        const validExtensions = results.filter(name => name !== null);
+        spinner.classList.add('hidden');
+        progressFill.style.width = validExtensions.length > 0 ? '100%' : '30%';
+
+        if (validExtensions.length > 0) {
+            const expiryTime = new Date().getTime() + (24 * 60 * 60 * 1000);
+            localStorage.setItem(CONFIG.STORAGE_KEY, "verified");
+            localStorage.setItem(CONFIG.VERIFICATION_EXPIRY_KEY, expiryTime.toString());
+            saveUserData("verified");
+            
+            success.classList.remove('hidden');
+            document.getElementById('user-info').textContent = `Verified User: ${CONFIG.CURRENT_USER}`;
+            statusElement.textContent = `Verification successful! Redirecting...`;
+            setTimeout(() => redirectToPage(), 3000);
+        } else {
+            failure.classList.remove('hidden');
+            statusElement.textContent = "Verification failed. Required extensions not found.";
+            document.getElementById('user-info').textContent = `Unverified User: ${CONFIG.CURRENT_USER}`;
+            saveUserData("failed");
+        }
+    });
 }
 
 function addVerificationCheck() {
-    if (window.location.pathname === VERIFICATION_PAGE) return;
+    if (window.location.pathname === CONFIG.VERIFICATION_PAGE) return;
 
     if (!checkVerificationStatus()) {
         showVerificationMessage();
         saveUserData("redirect-to-verification");
     } else {
-        const userData = JSON.parse(localStorage.getItem(USER_DATA_KEY) || "{}");
-        userData.lastChecked = CURRENT_UTC_TIME;
-        localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+        const userData = JSON.parse(localStorage.getItem(CONFIG.USER_DATA_KEY) || "{}");
+        userData.lastChecked = CONFIG.CURRENT_UTC_TIME;
+        localStorage.setItem(CONFIG.USER_DATA_KEY, JSON.stringify(userData));
     }
 }
 
 (function() {
-    const existingMessage = document.getElementById('verification-message');
-    if (existingMessage) existingMessage.remove();
-
     if (document.getElementById('status')) {
         checkExtensions();
     } else {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', addVerificationCheck);
-        } else {
-            addVerificationCheck();
-        }
+        addVerificationCheck();
     }
 })();
