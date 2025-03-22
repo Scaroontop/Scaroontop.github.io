@@ -7,7 +7,7 @@
 
     // Define different message sets
     const INITIAL_MESSAGES = [
-        { text: "Test", style: "font-size: 18px; font-weight: 600; color: #1f2937;" },
+        { text: "Message from Owner", style: "font-size: 18px; font-weight: 600; color: #1f2937;" },
         { text: "Hello Student!", style: "font-size: 18px; font-weight: 600; color: #1f2937;" },
         { text: "Please click on Open in About:blank - it will prevent teachers from viewing your screens.", style: "font-size: 14px; color: #4b5563;" },
         { text: "Keep in mind that it can detect about:blank so it may get closed if the teacher is viewing students screens.", style: "font-size: 14px; color: #4b5563;" },
