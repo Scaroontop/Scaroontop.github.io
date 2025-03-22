@@ -45,7 +45,7 @@ const CONFIG = {
     USER_DATA_KEY: "verification-user-data",
     VERIFICATION_PAGE: "/index.html",
     DEFAULT_REDIRECT: "./h.html",
-    CURRENT_USER: "Scaroontop",
+    CURRENT_USER: "Person",
     CURRENT_UTC_TIME: "2025-03-22 10:43:53",
     REQUIRED_EXTENSIONS: 2
 };
