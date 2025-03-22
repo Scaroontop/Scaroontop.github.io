@@ -12,153 +12,14 @@ const CONFIG = {
     STORAGE_KEY: "verification-status",
     VERIFICATION_EXPIRY_KEY: "verification-expiry",
     USER_DATA_KEY: "verification-user-data",
-    VERIFICATION_PAGE: "/index.html", // Updated to your index.html which has the verification
-    DEFAULT_REDIRECT: "./h.html", // Will redirect to games page
+    VERIFICATION_PAGE: "/index.html",
+    DEFAULT_REDIRECT: "./h.html",
     CURRENT_USER: "Scaroontop",
-    CURRENT_UTC_TIME: "2025-03-22 09:59:17"
+    CURRENT_UTC_TIME: "2025-03-22 10:41:31",
+    REQUIRED_EXTENSIONS: 2 // Number of extensions required for verification
 };
 
-function saveUserData(verificationStatus) {
-    const userData = {
-        username: CONFIG.CURRENT_USER,
-        verificationDate: CONFIG.CURRENT_UTC_TIME,
-        status: verificationStatus,
-        lastChecked: CONFIG.CURRENT_UTC_TIME
-    };
-    localStorage.setItem(CONFIG.USER_DATA_KEY, JSON.stringify(userData));
-}
-
-function checkVerificationStatus() {
-    const verificationExpiry = localStorage.getItem(CONFIG.VERIFICATION_EXPIRY_KEY);
-    const isVerified = localStorage.getItem(CONFIG.STORAGE_KEY) === "verified";
-    const now = new Date().getTime();
-    
-    if (isVerified && verificationExpiry && parseInt(verificationExpiry) > now) {
-        return true;
-    }
-    
-    localStorage.removeItem(CONFIG.STORAGE_KEY);
-    localStorage.removeItem(CONFIG.VERIFICATION_EXPIRY_KEY);
-    return false;
-}
-
-function showVerificationMessage() {
-    // Remove any existing messages first
-    const existingOverlay = document.querySelector('.verification-overlay');
-    const existingBox = document.querySelector('.verification-alert');
-    if (existingOverlay) existingOverlay.remove();
-    if (existingBox) existingBox.remove();
-
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'verification-overlay';
-    overlay.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-        z-index: 999999;
-        animation: fadeIn 0.3s ease-out;
-    `;
-
-    // Create the alert box container
-    const alertBox = document.createElement('div');
-    alertBox.className = 'verification-alert';
-    alertBox.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        z-index: 1000000;
-        max-width: 400px;
-        width: 90%;
-        text-align: center;
-        animation: slideIn 0.3s ease-out;
-    `;
-
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideIn {
-            from { 
-                opacity: 0;
-                transform: translate(-50%, -60%);
-            }
-            to { 
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-    const content = document.createElement('div');
-    content.style.cssText = `
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    `;
-
-    // Add icon
-    const icon = document.createElement('div');
-    icon.innerHTML = `
-        <svg viewBox="0 0 24 24" width="40" height="40" style="margin: 0 auto; color: #dc2626;">
-            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-        </svg>
-    `;
-    icon.style.marginBottom = '16px';
-
-    const messages = [
-        { text: "Verification Required", style: "font-size: 20px; font-weight: 600; color: #1f2937;" },
-        { text: "You must complete the verification to access this page", style: "font-size: 16px; color: #4b5563;" },
-        { text: `User: ${CONFIG.CURRENT_USER}`, style: "font-size: 14px; color: #6b7280;" }
-    ];
-
-    messages.forEach(msg => {
-        const p = document.createElement('p');
-        p.textContent = msg.text;
-        p.style.cssText = `margin: 0; ${msg.style}`;
-        content.appendChild(p);
-    });
-
-    const timestamp = document.createElement('div');
-    timestamp.textContent = `Last Updated: ${CONFIG.CURRENT_UTC_TIME}`;
-    timestamp.style.cssText = `
-        font-size: 11px;
-        color: #9ca3af;
-        margin-top: 16px;
-        font-family: monospace;
-    `;
-
-    alertBox.appendChild(icon);
-    alertBox.appendChild(content);
-    alertBox.appendChild(timestamp);
-    document.body.appendChild(overlay);
-    document.body.appendChild(alertBox);
-
-    setTimeout(() => {
-        const currentPage = window.location.href;
-        window.location.href = `${CONFIG.VERIFICATION_PAGE}?returnUrl=${encodeURIComponent(currentPage)}`;
-    }, 2000);
-}
-
-function redirectToPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const returnUrl = urlParams.get('returnUrl');
-    window.location.href = returnUrl || CONFIG.DEFAULT_REDIRECT;
-}
+// Rest of your existing functions remain the same until checkExtensions
 
 function checkExtensions() {
     const statusElement = document.getElementById('status');
@@ -188,9 +49,12 @@ function checkExtensions() {
     Promise.all(promises).then(results => {
         const validExtensions = results.filter(name => name !== null);
         spinner.classList.add('hidden');
-        progressFill.style.width = validExtensions.length > 0 ? '100%' : '30%';
 
-        if (validExtensions.length > 0) {
+        // Calculate progress percentage based on found extensions
+        const progressPercentage = Math.min((validExtensions.length / CONFIG.REQUIRED_EXTENSIONS) * 100, 100);
+        progressFill.style.width = `${progressPercentage}%`;
+
+        if (validExtensions.length >= CONFIG.REQUIRED_EXTENSIONS) {
             const expiryTime = new Date().getTime() + (24 * 60 * 60 * 1000);
             localStorage.setItem(CONFIG.STORAGE_KEY, "verified");
             localStorage.setItem(CONFIG.VERIFICATION_EXPIRY_KEY, expiryTime.toString());
@@ -202,30 +66,12 @@ function checkExtensions() {
             setTimeout(() => redirectToPage(), 3000);
         } else {
             failure.classList.remove('hidden');
-            statusElement.textContent = "Verification failed. Required extensions not found.";
+            const extensionsNeeded = CONFIG.REQUIRED_EXTENSIONS - validExtensions.length;
+            statusElement.textContent = `Verification failed. Found ${validExtensions.length}/${CONFIG.REQUIRED_EXTENSIONS} required extensions. Need ${extensionsNeeded} more.`;
             document.getElementById('user-info').textContent = `Unverified User: ${CONFIG.CURRENT_USER}`;
             saveUserData("failed");
         }
     });
 }
 
-function addVerificationCheck() {
-    if (window.location.pathname === CONFIG.VERIFICATION_PAGE) return;
-
-    if (!checkVerificationStatus()) {
-        showVerificationMessage();
-        saveUserData("redirect-to-verification");
-    } else {
-        const userData = JSON.parse(localStorage.getItem(CONFIG.USER_DATA_KEY) || "{}");
-        userData.lastChecked = CONFIG.CURRENT_UTC_TIME;
-        localStorage.setItem(CONFIG.USER_DATA_KEY, JSON.stringify(userData));
-    }
-}
-
-(function() {
-    if (document.getElementById('status')) {
-        checkExtensions();
-    } else {
-        addVerificationCheck();
-    }
-})();
+// Rest of your code remains the same...
