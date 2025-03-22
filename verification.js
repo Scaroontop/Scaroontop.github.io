@@ -5,6 +5,60 @@ const extensions = {
     "Securly (2nd ID)": "chrome-extension://joflmkccibkooplaeoinecjbmdebglab/fonts/Metropolis.css",
     "Securly (1st ID)": "chrome-extension://iheobagjkfklnlikgihanlhcddjoihkg/fonts/Metropolis.css",
     "GoGuardian": "chrome-extension://haldlgldplgnggkjaafhelgiaglafanh/youtube_injection.js",
+    "LANSchool": "chrome-extension://baleiojnjpgeojohhhfbichcodgljmnj/blocked.html",
+    "Linewize": "chrome-extension://ddfbkhpmcdbciejenfcolaaiebnjcbfc/background/assets/pages/default-blocked.html",
+    "Blocksi": "chrome-extension://ghlpmldmjjhmdgmneoaibbegkjjbonbk/pages/blockPage.html",
+    "FortiGuard": "chrome-extension://igbgpehnbmhgdgjbhkkpedommgmfbeao/youtube_injection.js",
+    "Cisco Umbrella": "chrome-extension://jcdhmojfecjfmbdpchihbeilohgnbdci/blocked.html",
+    "ContentKeeper": "chrome-extension://jdogphakondfdmcanpapfahkdomaicfa/img/ckauth19x.png",
+    "CK-Authenticator G3": "chrome-extension://odoanpnonilogofggaohhkdkdgbhdljp/img/ckauth19x.png",
+    "Securly Classroom (2nd ID)": "chrome-extension://hkobaiihndnbfhbkmjjfbdimfbdcppdh/notfound.html",
+    "Securly Classroom (1st ID)": "chrome-extension://jfbecfmiegcjddenjhlbhlikcbfmnafd/notfound.html",
+    "Hapara (2nd ID)": "chrome-extension://kbohafcopfpigkjdimdcdgenlhkmhbnc/blocked.html",
+    "Hapara (1st ID)": "chrome-extension://aceopacgaepdcelohobicpffbbejnfac/blocked.html",
+    "iboss": "chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html",
+    "Lightspeed Digital Insight Agent": "chrome-extension://njdniclgegijdcdliklgieicanpmcngj/js/wasm_exec.js",
+    "Lightspeed Filter Agent": "chrome-extension://adkcpkpghahmbopkjchobieckeoaoeem/icon-128.png",
+    "Lightspeed Classroom": "chrome-extension://kkbmdgjggcdajckdlbngdjonpchpaiea/assets/icon-classroom-128.png",
+    "InterCLASS Filtering Service": "chrome-extension://jbddgjglgkkneonnineaohdhabjbgopi/pages/message-page.html",
+    "InterSafe GatewayConnection Agent": "chrome-extension://ecjoghccnjlodjlmkgmnbnkdcbnjgden/resources/options.js",
+    "LoiLo Web Filters": "chrome-extension://pabjlbjcgldndnpjnokjakbdofjgnfia/image/allow_icon/shield_green_128x128.png",
+    "Gopher Buddy": "chrome-extension://cgbbbjmgdpnifijconhamggjehlamcif/images/gopher-buddy_128x128_color.png",
+    "LanSchool Web Helper": "chrome-extension://honjcnefekfnompampcpmcdadibmjhlk/blocked.html",
+    "IMTLazarus": "chrome-extension://cgigopjakkeclhggchgnhmpmhghcbnaf/models/model.json",
+    "Impero Backdrop": "chrome-extension://jjpmjccpemllnmgiaojaocgnakpmfgjg/licenses.html",
+    "Mobile Guardian": "chrome-extension://fgmafhdohjkdhfaacgbgclmfgkgokgmb/block.html",
+    "NetSupport School Student": "chrome-extension://gcjpefhffmcgplgklffgbebganmhffje/_locales/lt/messages.json",
+    "classroom.cloud Student": "chrome-extension://mpkdoimpgkhjcicmhmlmgboelebflpla/_locales/lt/messages.json",
+    "Lockdown Browser": "chrome-extension://fogjeanjfbiombghnmkmmophfeccjdki/manifest.json",
+    "Linewize Filter": "chrome-extension://ifinpabiejbjobcphhaomiifjibpkjlf/background/assets/pages/default-blocked.html",
+    "Borderless Classroom Student": "chrome-extension://kdpgkligilplaanoablcpjahjjeghcl/pages/blockPage.html",
+    "Borderless Classroom Student (2nd ID)": "chrome-extension://apchgbgnimojffnkddiigiekiooeieno/pages/blockPage.html",
+    "LockDown Browser AP Classroom Edition": "chrome-extension://djpknfecbncogekjnjppojlaipeobkmo/assets/images/icon_128.png",
+    "Lugus School": "chrome-extension://eoobggamkobbcpiojefejfglbfcacgca/assets/images/icon_128.png"
+        <option value="chrome-extension://igbgpehnbmhgdgjbhkkpedommgmfbeao/youtube_injection.js">FortiGuard</option>
+        <option value="chrome-extension://jcdhmojfecjfmbdpchihbeilohgnbdci/blocked.html">Cisco Umbrella</option>
+        <option value="chrome-extension://jdogphakondfdmcanpapfahkdomaicfa/img/ckauth19x.png">ContentKeeper</option>
+        <option value="chrome-extension://odoanpnonilogofggaohhkdkdgbhdljp/img/ckauth19x.png">CK-Authenticator G3</option>
+        <option value="chrome-extension://hkobaiihndnbfhbkmjjfbdimfbdcppdh/notfound.html">Securly Classroom (2nd ID)</option>
+        <option value="chrome-extension://jfbecfmiegcjddenjhlbhlikcbfmnafd/notfound.html">Securly Classroom (1st ID)</option>
+        <option value="chrome-extension://kbohafcopfpigkjdimdcdgenlhkmhbnc/blocked.html">Hapara (2nd ID)</option>
+        <option value="chrome-extension://aceopacgaepdcelohobicpffbbejnfac/blocked.html">Hapara (1st ID)</option>
+        <option value="chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html">iboss</option>
+        <option value="chrome-extension://njdniclgegijdcdliklgieicanpmcngj/js/speed_test.js">Lightspeed Digital Insight Agent</option>
+        <option value="chrome-extension://adkcpkpghahmbopkjchobieckeoaoeem/icon-128.png">Lightspeed Filter Agent</option>
+        <option value="chrome-extension://kkbmdgjggcdajckdlbngdjonpchpaiea/assets/icon-classroom-128.png">Lightspeed Classroom</option>
+        <option value="chrome-extension://jbddgjglgkkneonnineaohdhabjbgopi/pages/message-page.html">InterCLASS Filtering Service</option>
+        <option value="chrome-extension://ecjoghccnjlodjlmkgmnbnkdcbnjgden/resources/options.js">InterSafe GatewayConnection Agent</option>
+        <option value="chrome-extension://pabjlbjcgldndnpjnokjakbdofjgnfia/image/allow_icon/shield_green_128x128.png">LoiLo Web Filters</option>
+        <option value="chrome-extension://cgbbbjmgdpnifijconhamggjehlamcif/images/gopher-buddy_128x128_color.png">Gopher Buddy</option>
+        <option value="chrome-extension://honjcnefekfnompampcpmcdadibmjhlk/blocked.html">LanSchool Web Helper</option>
+        <option value="chrome-extension://cgigopjakkeclhggchgnhmpmhghcbnaf/models/model.json">IMTLazarus</option>
+        <option value="chrome-extension://jjpmjccpemllnmgiaojaocgnakpmfgjg/licenses.html">Impero Backdrop</option>
+        <option value="chrome-extension://fgmafhdohjkdhfaacgbgclmfgkgokgmb/block.html">Mobile Guardian</option>
+        <option value="chrome-extension://gcjpefhffmcgplgklffgbebganmhffje/_locales/lt/messages.json">NetSupport School Student</option>
+        <option value="chrome-extension://mpkdoimpgkhjcicmhmlmgboelebflpla/_locales/lt/messages.json">classroom.cloud Student</option>
+
 };
 
 // Configuration
