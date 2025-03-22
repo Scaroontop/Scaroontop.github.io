@@ -2,23 +2,28 @@
     const STORAGE_KEY = "verification-status";
     const VERIFICATION_EXPIRY_KEY = "verification-expiry";
     const ALERT_SEEN_KEY = "alert-seen";
-    const CURRENT_UTC_TIME = "2025-03-22 10:10:02";
+    const CURRENT_UTC_TIME = "2025-03-22 10:20:57";
     const CURRENT_USER = "Scaroontop";
 
     // Define different message sets
     const INITIAL_MESSAGES = [
-        { text: "Test", style: "font-size: 18px; font-weight: 600; color: #1f2937;" }
+        { text: "Test", style: "font-size: 18px; font-weight: 600; color: #1f2937;" },
+        { text: "Hello Student!", style: "font-size: 18px; font-weight: 600; color: #1f2937;" },
+        { text: "Please click on Open in About:blank - it will prevent teachers from viewing your screens.", style: "font-size: 14px; color: #4b5563;" },
+        { text: "Keep in mind that it can detect about:blank so it may get closed if the teacher is viewing students screens.", style: "font-size: 14px; color: #4b5563;" },
+        { text: "New methods will be coming soon, just wait :)", style: "font-size: 14px; color: #4b5563;" },
+        { text: "- From love Scaro/Sap", style: "font-size: 14px; color: #6b7280; font-style: italic;" }
     ];
 
     const CHANGELOG_MESSAGES = [
         { text: "Changelog", style: "font-size: 20px; font-weight: 600; color: #1f2937;" },
         { text: "Version 1.0.1 (2025-03-22)", style: "font-size: 16px; font-weight: 600; color: #4b5563;" },
         { text: "• Added verification system", style: "font-size: 14px; color: #6b7280;" },
-        { text: "• Improved about:blank cloaking", style: "font-size: 14px; color: #6b7280;" },
-        { text: "• Added new games section", style: "font-size: 14px; color: #6b7280;" },
+        { text: "• Improved stuff", style: "font-size: 14px; color: #6b7280;" },
+        { text: "• Updated Verify and alert 1000 times", style: "font-size: 14px; color: #6b7280;" },
         { text: "Version 1.0.0 (2025-03-21)", style: "font-size: 16px; font-weight: 600; color: #4b5563; margin-top: 8px;" },
         { text: "• Initial release", style: "font-size: 14px; color: #6b7280;" },
-        { text: "• Basic game functionality", style: "font-size: 14px; color: #6b7280;" }
+        { text: "• Added some games", style: "font-size: 14px; color: #6b7280;" }
     ];
 
     function createMessageBox(messages, type = 'initial') {
@@ -69,6 +74,9 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
         `;
 
         // Add messages
@@ -176,6 +184,26 @@
             text-align: center;
             font-family: monospace;
         `;
+
+        // Add scrollbar styles
+        const scrollbarStyle = document.createElement('style');
+        scrollbarStyle.textContent = `
+            .alert-box div::-webkit-scrollbar {
+                width: 8px;
+            }
+            .alert-box div::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 4px;
+            }
+            .alert-box div::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+            .alert-box div::-webkit-scrollbar-thumb:hover {
+                background: #666;
+            }
+        `;
+        document.head.appendChild(scrollbarStyle);
 
         // Assemble and add to page
         alertBox.appendChild(messagesContainer);
