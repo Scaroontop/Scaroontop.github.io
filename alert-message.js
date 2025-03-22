@@ -17,11 +17,11 @@
 
     const CHANGELOG_MESSAGES = [
         { text: "Changelog", style: "font-size: 20px; font-weight: 600; color: #1f2937;" },
-        { text: "Version 1.0.1 (2025-03-22)", style: "font-size: 16px; font-weight: 600; color: #4b5563;" },
+        { text: "Version 0.0.1 (2025-03-22)", style: "font-size: 16px; font-weight: 600; color: #4b5563;" },
         { text: "• Added verification system", style: "font-size: 14px; color: #6b7280;" },
         { text: "• Improved stuff", style: "font-size: 14px; color: #6b7280;" },
         { text: "• Updated Verify and alert 1000 times", style: "font-size: 14px; color: #6b7280;" },
-        { text: "Version 1.0.0 (2025-03-21)", style: "font-size: 16px; font-weight: 600; color: #4b5563; margin-top: 8px;" },
+        { text: "Version 0.0.0 (2025-03-21)", style: "font-size: 16px; font-weight: 600; color: #4b5563; margin-top: 8px;" },
         { text: "• Initial release", style: "font-size: 14px; color: #6b7280;" },
         { text: "• Added some games", style: "font-size: 14px; color: #6b7280;" }
     ];
