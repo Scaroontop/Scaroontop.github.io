@@ -2,7 +2,7 @@
     const STORAGE_KEY = "verification-status";
     const VERIFICATION_EXPIRY_KEY = "verification-expiry";
     const ALERT_SEEN_KEY = "alert-seen";
-    const CURRENT_UTC_TIME = "2025-03-22 10:20:57";
+    const CURRENT_UTC_TIME = "2025-03-22 10:48:53";
     const CURRENT_USER = "Scaroontop";
 
     // Define different message sets
@@ -25,6 +25,23 @@
         { text: "• Initial release", style: "font-size: 14px; color: #6b7280;" },
         { text: "• Added some games", style: "font-size: 14px; color: #6b7280;" }
     ];
+
+    const UNVERIFIED_MESSAGES = [
+        { text: "Verification Required", style: "font-size: 20px; font-weight: 600; color: #dc2626;" },
+        { text: "You need to verify first!", style: "font-size: 16px; color: #4b5563;" },
+        { text: "Please complete the verification process to see this message.", style: "font-size: 14px; color: #6b7280;" }
+    ];
+
+    function checkVerificationStatus() {
+        const verificationExpiry = localStorage.getItem(VERIFICATION_EXPIRY_KEY);
+        const isVerified = localStorage.getItem(STORAGE_KEY) === "verified";
+        const now = new Date().getTime();
+        
+        if (isVerified && verificationExpiry && parseInt(verificationExpiry) > now) {
+            return true;
+        }
+        return false;
+    }
 
     function createMessageBox(messages, type = 'initial') {
         // Remove existing elements
@@ -122,8 +139,14 @@
             return button;
         }
 
-        // Add appropriate buttons based on type
-        if (type === 'initial') {
+        // Add buttons based on type and verification status
+        if (type === 'unverified') {
+            const verifyButton = createButton('Verify Now');
+            verifyButton.onclick = () => {
+                window.location.href = '/index.html';
+            };
+            buttonsContainer.appendChild(verifyButton);
+        } else if (type === 'initial') {
             const changelogsButton = createButton('Changelogs');
             changelogsButton.onclick = () => {
                 createMessageBox(CHANGELOG_MESSAGES, 'changelog');
@@ -218,7 +241,11 @@
     // Initialize
     function initialize() {
         if (!localStorage.getItem(ALERT_SEEN_KEY)) {
-            createMessageBox(INITIAL_MESSAGES, 'initial');
+            if (checkVerificationStatus()) {
+                createMessageBox(INITIAL_MESSAGES, 'initial');
+            } else {
+                createMessageBox(UNVERIFIED_MESSAGES, 'unverified');
+            }
         }
     }
 
