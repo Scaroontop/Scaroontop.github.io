@@ -36,8 +36,6 @@ const extensions = {
     "Borderless Classroom Student (2nd ID)": "chrome-extension://apchgbgnimojffnkddiigiekiooeieno/pages/blockPage.html",
     "LockDown Browser AP Classroom Edition": "chrome-extension://djpknfecbncogekjnjppojlaipeobkmo/assets/images/icon_128.png",
     "Lugus School": "chrome-extension://eoobggamkobbcpiojefejfglbfcacgca/assets/images/icon_128.png",
-    "Goguardian license": "chrome-extension://iebjhfinbefifbikdchdnodkdickdghe/background.html",
-    "Clever plus": "chrome-extension://dikiaagfielfbnbbopidjjagldjopbpa/js/credential_form.html",
 };
 
 // Configuration
@@ -49,7 +47,7 @@ const CONFIG = {
     DEFAULT_REDIRECT: "./h.html",
     CURRENT_USER: "Scaroontop",
     CURRENT_UTC_TIME: "2025-03-22 17:10:01",
-    REQUIRED_EXTENSIONS: 5
+    REQUIRED_EXTENSIONS: 2
 };
 
 function saveUserData(verificationStatus) {
