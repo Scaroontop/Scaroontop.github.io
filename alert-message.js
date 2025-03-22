@@ -2,7 +2,7 @@
     const STORAGE_KEY = "verification-status";
     const VERIFICATION_EXPIRY_KEY = "verification-expiry";
     const ALERT_SEEN_KEY = "alert-seen";
-    const CURRENT_UTC_TIME = "2025-03-22 09:36:56";
+    const CURRENT_UTC_TIME = "2025-03-22 10:07:12";
     const CURRENT_USER = "Scaroontop";
 
     // Define different message sets
@@ -18,9 +18,35 @@
         { text: "- From love Scaro/Sap", style: "font-size: 14px; color: #6b7280; font-style: italic;" }
     ];
 
-    function createMessageBox(messages, showChangelogsButton = true) {
+    const CHANGELOG_MESSAGES = [
+        { text: "Changelog", style: "font-size: 20px; font-weight: 600; color: #1f2937;" },
+        { text: "Version 1.0.1 (2025-03-22)", style: "font-size: 16px; font-weight: 600; color: #4b5563;" },
+        { text: "• Added verification system", style: "font-size: 14px; color: #6b7280;" },
+        { text: "• Improved about:blank cloaking", style: "font-size: 14px; color: #6b7280;" },
+        { text: "• Added new games section", style: "font-size: 14px; color: #6b7280;" },
+        { text: "Version 1.0.0 (2025-03-21)", style: "font-size: 16px; font-weight: 600; color: #4b5563; margin-top: 8px;" },
+        { text: "• Initial release", style: "font-size: 14px; color: #6b7280;" },
+        { text: "• Basic game functionality", style: "font-size: 14px; color: #6b7280;" }
+    ];
+
+    function checkVerificationStatus() {
+        const verificationExpiry = localStorage.getItem(VERIFICATION_EXPIRY_KEY);
+        const isVerified = localStorage.getItem(STORAGE_KEY) === "verified";
+        const now = new Date().getTime();
+        
+        return isVerified && verificationExpiry && parseInt(verificationExpiry) > now;
+    }
+
+    function createMessageBox(messages, isChangelog = false) {
+        // Remove any existing alert
+        const existingOverlay = document.querySelector('.alert-overlay');
+        const existingBox = document.querySelector('.alert-box');
+        if (existingOverlay) existingOverlay.remove();
+        if (existingBox) existingBox.remove();
+
         // Create the alert box container
         const alertBox = document.createElement('div');
+        alertBox.className = 'alert-box';
         alertBox.style.cssText = `
             position: fixed;
             top: 50%;
@@ -66,21 +92,27 @@
             justify-content: center;
         `;
 
-        // Create the buttons
-        const buttons = [
-            { text: "I understand", primary: true }
-        ];
-
-        if (showChangelogsButton) {
-            buttons.unshift({ text: "Message from Scaro/sap", primary: false });
+        // Create the buttons based on context
+        const buttons = [];
+        
+        if (isChangelog) {
+            buttons.push(
+                { text: "I understand", primary: true },
+                { text: "Later", primary: true }
+            );
+        } else {
+            buttons.push(
+                { text: "Changelogs", primary: true },
+                { text: "I understand", primary: true }
+            );
         }
 
         buttons.forEach(btnConfig => {
             const button = document.createElement('button');
             button.textContent = btnConfig.text;
             button.style.cssText = `
-                background: ${btnConfig.primary ? '#6366f1' : '#e5e7eb'};
-                color: ${btnConfig.primary ? 'white' : '#374151'};
+                background: #6366f1;
+                color: white;
                 border: none;
                 padding: 10px 20px;
                 border-radius: 6px;
@@ -92,42 +124,39 @@
                 max-width: 200px;
             `;
 
-            button.onmouseover = () => button.style.background = btnConfig.primary ? '#4f46e5' : '#d1d5db';
-            button.onmouseout = () => button.style.background = btnConfig.primary ? '#6366f1' : '#e5e7eb';
+            button.onmouseover = () => button.style.background = '#4f46e5';
+            button.onmouseout = () => button.style.background = '#6366f1';
 
             button.onclick = () => {
-                if (btnConfig.primary) {
+                if (button.textContent === "I understand") {
                     localStorage.setItem(ALERT_SEEN_KEY, 'true');
                     overlay.remove();
                     alertBox.remove();
-                } else {
-                    // Show Scaro's message
+                } else if (button.textContent === "Later") {
+                    overlay.remove();
                     alertBox.remove();
-                    createMessageBox(SCARO_MESSAGES, false);
+                } else if (button.textContent === "Changelogs") {
+                    createMessageBox(CHANGELOG_MESSAGES, true);
                 }
             };
 
             buttonsContainer.appendChild(button);
         });
 
-        // Create overlay (if it doesn't exist)
-        let overlay = document.querySelector('.alert-overlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.className = 'alert-overlay';
-            overlay. style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(2px);
-                z-index: 9999;
-                animation: fadeIn 0.3s ease-out;
-            `;
-            document.body.appendChild(overlay);
-        }
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'alert-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease-out;
+        `;
 
         // Add timestamp
         const timestamp = document.createElement('div');
@@ -154,14 +183,16 @@
         alertBox.appendChild(messagesContainer);
         alertBox.appendChild(buttonsContainer);
         alertBox.appendChild(timestamp);
+        document.body.appendChild(overlay);
         document.body.appendChild(alertBox);
-
-        return { overlay, alertBox };
     }
 
     // Initialize
     function initialize() {
-        createMessageBox(INITIAL_MESSAGES);
+        // Only show messages if user is verified
+        if (checkVerificationStatus() && !localStorage.getItem(ALERT_SEEN_KEY)) {
+            createMessageBox(INITIAL_MESSAGES, false);
+        }
     }
 
     // Run immediately
