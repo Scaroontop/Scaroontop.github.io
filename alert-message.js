@@ -2,7 +2,7 @@
     const STORAGE_KEY = "verification-status";
     const VERIFICATION_EXPIRY_KEY = "verification-expiry";
     const ALERT_SEEN_KEY = "alert-seen";
-    const CURRENT_UTC_TIME = "2025-03-22 08:49:43";
+    const CURRENT_UTC_TIME = "2025-03-22 09:31:48";
     const CURRENT_USER = "Scaroontop";
 
     function checkVerificationStatus() {
@@ -11,7 +11,10 @@
         const now = new Date().getTime();
         const alertSeen = localStorage.getItem(ALERT_SEEN_KEY);
         
-        return isVerified && verificationExpiry && parseInt(verificationExpiry) > now && !alertSeen;
+        // For testing, always return true
+        return true; // This will make the alert always show
+        // Return this instead for production:
+        // return isVerified && verificationExpiry && parseInt(verificationExpiry) > now && !alertSeen;
     }
 
     function createAlertBox() {
@@ -33,34 +36,85 @@
             animation: fadeIn 0.3s ease-out;
         `;
 
-        // Create the message
-        const message = document.createElement('p');
-        message.textContent = "Hello Student Please click on Open in About:blank it will prevent teachers from viewing your screens also keep in mind that it can detect about:blank so it may get closed if the the teacher is viewing students screens. New methods will be soon just wait :) - From love Scaro/Sap";
-        message.style.cssText = `
+        // Create the messages container
+        const messagesContainer = document.createElement('div');
+        messagesContainer.style.cssText = `
             margin: 0 0 20px 0;
-            font-size: 16px;
-            color: #1f2937;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         `;
 
-        // Create the button
-        const button = document.createElement('button');
-        button.textContent = "I understand";
-        button.style.cssText = `
-            background: #6366f1;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background-color 0.2s;
+        // Add multiple messages
+        const messages = [
+            "Hello Student!",
+            "Please click on Open in About:blank - it will prevent teachers from viewing your screens.",
+            "Keep in mind that it can detect about:blank so it may get closed if the teacher is viewing student's screens.",
+            "New methods will be coming soon, just wait :)",
+            "- From love Scaro/Sap"
+        ];
+
+        messages.forEach((text, index) => {
+            const message = document.createElement('p');
+            message.textContent = text;
+            message.style.cssText = `
+                margin: 0;
+                font-size: ${index === 0 ? '18px' : '14px'};
+                color: ${index === 0 ? '#1f2937' : '#4b5563'};
+                font-weight: ${index === 0 ? '600' : '400'};
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                ${index === messages.length - 1 ? 'font-style: italic;' : ''}
+            `;
+            messagesContainer.appendChild(message);
+        });
+
+        // Create buttons container
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.style.cssText = `
+            display: flex;
+            gap: 10px;
+            justify-content: center;
         `;
 
-        // Add hover effect
-        button.onmouseover = () => button.style.background = '#4f46e5';
-        button.onmouseout = () => button.style.background = '#6366f1';
+        // Create the buttons
+        const buttons = [
+            { text: "I understand", primary: true },
+            { text: "Changelog", primary: false }
+        ];
+
+        buttons.forEach(btnConfig => {
+            const button = document.createElement('button');
+            button.textContent = btnConfig.text;
+            button.style.cssText = `
+                background: ${btnConfig.primary ? '#6366f1' : '#e5e7eb'};
+                color: ${btnConfig.primary ? 'white' : '#374151'};
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s;
+                flex: 1;
+                max-width: 150px;
+            `;
+
+            button.onmouseover = () => button.style.background = btnConfig.primary ? '#4f46e5' : '#d1d5db';
+            button.onmouseout = () => button.style.background = btnConfig.primary ? '#6366f1' : '#e5e7eb';
+
+            button.onclick = () => {
+                if (btnConfig.primary) {
+                    localStorage.setItem(ALERT_SEEN_KEY, 'true');
+                    overlay.remove();
+                    alertBox.remove();
+                } else {
+                    // Handle changelog button click
+                    alert("Changelog coming soon!");
+                }
+            };
+
+            buttonsContainer.appendChild(button);
+        });
 
         // Create overlay
         const overlay = document.createElement('div');
@@ -71,6 +125,7 @@
             right: 0;
             bottom: 0;
             background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
             z-index: 9999;
             animation: fadeIn 0.3s ease-out;
         `;
@@ -85,31 +140,25 @@
         `;
         document.head.appendChild(style);
 
-        // Add click handler
-        button.onclick = () => {
-            localStorage.setItem(ALERT_SEEN_KEY, 'true');
-            overlay.remove();
-            alertBox.remove();
-        };
+        // Add timestamp
+        const timestamp = document.createElement('div');
+        timestamp.textContent = `Last Updated: ${CURRENT_UTC_TIME}`;
+        timestamp.style.cssText = `
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 16px;
+            text-align: center;
+            font-family: monospace;
+        `;
 
         // Assemble and add to page
-        alertBox.appendChild(message);
-        alertBox.appendChild(button);
+        alertBox.appendChild(messagesContainer);
+        alertBox.appendChild(buttonsContainer);
+        alertBox.appendChild(timestamp);
         document.body.appendChild(overlay);
         document.body.appendChild(alertBox);
     }
 
-    // Initialize
-    function initialize() {
-        if (checkVerificationStatus()) {
-            createAlertBox();
-        }
-    }
-
-    // Run when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initialize);
-    } else {
-        initialize();
-    }
+    // Initialize immediately
+    createAlertBox();
 })();
